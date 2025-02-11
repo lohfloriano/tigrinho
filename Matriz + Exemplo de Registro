@@ -1,0 +1,74 @@
+import random
+
+def registrar():
+    print(f" Bem-vindo ao Tigrinho 🐯 ")
+    nome = input("Digite seu nome para se registrar: ")
+    while True:
+        try:
+            giros = int(input("Informe o número de giros que você deseja: "))
+            if giros <= 0:
+                print("O número de giros deve ser maior que zero!")
+                continue
+            break
+        except ValueError:
+            print("Por favor, digite um número inteiro que seja  válido.")
+    return nome, giros
+
+def gerar_matriz():
+    simbolos = ["7", "🐅", "🐯"]
+    matriz = []
+    for _ in range(3):       
+        linha = [random.choice(simbolos) for _ in range(3)]
+        matriz.append(linha)
+    return matriz
+
+def exibir_matriz(matriz):
+    print("-" * 20)
+    for linha in matriz:
+        print(" | ".join(linha))
+    print("-" * 20)
+
+def verificar_vitoria_spin(matriz):
+    if matriz[0][0] == matriz[0][1] == matriz[0][2]:# - igual
+        return True
+    elif matriz[1][0] == matriz[1][1] == matriz[1][2]:#- igual
+        return True
+    elif matriz[2][0] == matriz[2][1] == matriz[2][2]:# - igual
+        return True 
+    elif matriz[0][0] == matriz[1][0] == matriz[2][0]:# | igual
+        return True 
+    elif matriz[0][1] == matriz[1][1] == matriz[2][1]:# | igual
+        return True 
+    elif matriz[0][2] == matriz[1][2] == matriz[2][2]:# | igual
+        return True 
+    return False
+
+def main():
+    nome, chances = registrar()
+    required_wins = 1
+    win_count = 0
+
+    print(f"\nOlá {nome}! Você terá {chances} chance(s) para jogar.")
+    print(f"Para vencer o jackpot, você precisa obter {required_wins} giro(s) vencedor(es)!")
+    
+    for giro in range(1, chances + 1):
+        input(f"\nPressione Enter para realizar o giro {giro} de {chances}...")
+        print(f"\n=== Giro {giro} ===")
+        matriz = gerar_matriz()
+        exibir_matriz(matriz)
+        if verificar_vitoria_spin(matriz):
+            print(" WIN  ")
+            win_count += 1
+        else:
+            print("Giro sem vitória. Tente novamente!")
+    
+    print("\n=== Fim dos Giros ===")
+    print(f"Você obteve {win_count} giro(s) vencedor(es).")
+    
+    if win_count >= required_wins:
+        print(f"\nParabéns {nome}, O Tigrinho pagou !")
+    else:
+        print(f"\nCatapimbas {nome}, você não venceu. Tente novamente!")
+
+if __name__ == "__main__":
+    main()
