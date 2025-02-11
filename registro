@@ -1,0 +1,84 @@
+import customtkinter as ctk # type: ignore
+import os
+
+# Configuração da aparência
+ctk.set_appearance_mode('dark')
+
+# Nome do arquivo onde os usuários serão armazenados
+arquivo_usuarios = "usuarios.txt"
+
+# Criar o arquivo caso não exista
+if not os.path.exists(arquivo_usuarios):
+    with open(arquivo_usuarios, "w") as f:
+        f.write("")  # Apenas cria o arquivo vazio
+
+# Função para verificar se o usuário já existe
+def usuario_existe(usuario):
+    with open(arquivo_usuarios, "r") as f:
+        for linha in f:
+            user, _ = linha.strip().split(",")
+            if user == usuario:
+                return True
+    return False
+
+# Função para registrar um novo usuário
+def registrar_usuario():
+    usuario = campo_usuario.get().strip()
+    senha = campo_senha.get().strip()
+
+    if not usuario or not senha:
+        label_mensagem.configure(text="Preencha todos os campos!", text_color="red")
+        return
+
+    if usuario_existe(usuario):
+        label_mensagem.configure(text="Usuário já existe! Escolha outro nome.", text_color="orange")
+        return
+
+    with open(arquivo_usuarios, "a") as f:
+        f.write(f"{usuario},{senha}\n")
+    
+    label_mensagem.configure(text="Usuário cadastrado com sucesso!", text_color="green")
+
+# Função para validar login
+def validar_login():
+    usuario = campo_usuario.get().strip()
+    senha = campo_senha.get().strip()
+
+    with open(arquivo_usuarios, "r") as f:
+        for linha in f:
+            user, pwd = linha.strip().split(",")
+            if usuario == user and senha == pwd:
+                label_mensagem.configure(text="Login bem-sucedido!", text_color="green")
+                return
+
+    label_mensagem.configure(text="Usuário ou senha incorretos!", text_color="red")
+
+# Criação da janela principal
+app = ctk.CTk()
+app.title('Cadastro e Login')
+app.geometry('300x400')
+
+# Campos de entrada
+label_usuario = ctk.CTkLabel(app, text='Usuário')
+label_usuario.pack(pady=5)
+campo_usuario = ctk.CTkEntry(app, placeholder_text='Digite seu usuário')
+campo_usuario.pack(pady=5)
+
+label_senha = ctk.CTkLabel(app, text='Senha')
+label_senha.pack(pady=5)
+campo_senha = ctk.CTkEntry(app, placeholder_text='Digite sua senha', show="*")
+campo_senha.pack(pady=5)
+
+# Button
+botao_login = ctk.CTkButton(app, text='Login', command=validar_login)
+botao_login.pack(pady=10)
+
+botao_registrar = ctk.CTkButton(app, text='Registrar', command=registrar_usuario)
+botao_registrar.pack(pady=10)
+
+# Mensagem de feedback
+label_mensagem = ctk.CTkLabel(app, text="")
+label_mensagem.pack(pady=10)
+
+# Inicia o loop da aplicação
+app.mainloop()
