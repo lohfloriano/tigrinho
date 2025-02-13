@@ -1,84 +1,91 @@
-import customtkinter as ctk # type: ignore
-import os
+# sem campo vazio
+def entrada_valida(mensagem):
+    while True:
+        dado = input(mensagem).strip()  # strip remove espaços desnecessários
+        if dado: 
+            return dado
+        print("Preencha o campo vazio.")
 
-# Configuração da aparência
-ctk.set_appearance_mode('dark')
+# cpf com 11 números e apenas números
+def validar_cpf(cpf): 
+    if len(cpf) == 11 and cpf.isdigit():  # .isdigit verifica se todos os caracteres informados são números.
+        return True
+    else:
+        return False
 
-# Nome do arquivo onde os usuários serão armazenados
-arquivo_usuarios = "usuarios.txt"
-
-# Criar o arquivo caso não exista
-if not os.path.exists(arquivo_usuarios):
-    with open(arquivo_usuarios, "w") as f:
-        f.write("")  # Apenas cria o arquivo vazio
-
-# Função para verificar se o usuário já existe
-def usuario_existe(usuario):
-    with open(arquivo_usuarios, "r") as f:
-        for linha in f:
-            user, _ = linha.strip().split(",")
-            if user == usuario:
-                return True
+# verifica se nome de usuário ou CPF já existem
+def verificar_existencia(usuario, cpf):
+    try:
+        with open("usuarios.txt", "r") as arquivo:
+            for linha in arquivo:
+                dados = linha.strip().split(",")
+                if len(dados) == 3:
+                    nome_salvo, cpf_salvo, _ = dados
+                    if usuario == nome_salvo:
+                        print("\n⚠️ Nome de usuário já existe. Escolha outro.")
+                        return True
+                    if cpf == cpf_salvo:
+                        print("\n⚠️ CPF já cadastrado.")
+                        return True
+    except FileNotFoundError:
+        pass  # se o arquivo não existir, significa que nenhum usuário foi cadastrado ainda
     return False
 
-# Função para registrar um novo usuário
-def registrar_usuario():
-    usuario = campo_usuario.get().strip()
-    senha = campo_senha.get().strip()
+# apresentação inicial
+print("Seja bem-vindo ao NOMEDOJOGO! Antes de tudo, vamos começar com seu cadastro, preencha os dados a seguir corretamente.")
 
-    if not usuario or not senha:
-        label_mensagem.configure(text="Preencha todos os campos!", text_color="red")
-        return
+while True:
+    usuario = entrada_valida("Digite seu nome de usuário:")
 
-    if usuario_existe(usuario):
-        label_mensagem.configure(text="Usuário já existe! Escolha outro nome.", text_color="orange")
-        return
+    # loop cpf
+    while True:
+        cpf = input("Informe seu CPF:")
+        if validar_cpf(cpf):
+            break
+        else:
+            print("CPF inválido. Informe apenas números com 11 dígitos.")
 
-    with open(arquivo_usuarios, "a") as f:
-        f.write(f"{usuario},{senha}\n")
-    
-    label_mensagem.configure(text="Usuário cadastrado com sucesso!", text_color="green")
+    senha = entrada_valida("Digite sua senha:")
 
-# Função para validar login
-def validar_login():
-    usuario = campo_usuario.get().strip()
-    senha = campo_senha.get().strip()
+    # verifica se já existe um usuário ou CPF cadastrado
+    if verificar_existencia(usuario, cpf):
+        print("\n⚠️ Cadastro não permitido. Tente novamente.\n")
+    else:
+        break
 
-    with open(arquivo_usuarios, "r") as f:
-        for linha in f:
-            user, pwd = linha.strip().split(",")
-            if usuario == user and senha == pwd:
-                label_mensagem.configure(text="Login bem-sucedido!", text_color="green")
-                return
+# Salvando os dados no arquivo usuarios.txt
+with open("usuarios.txt", "a") as arquivo:  # "a" (append) adiciona novos dados sem apagar os anteriores
+    arquivo.write(f"{usuario},{cpf},{senha}\n")  # armazena dados separados por vírgula
 
-    label_mensagem.configure(text="Usuário ou senha incorretos!", text_color="red")
+print("\n✅ Cadastro realizado com sucesso!")
 
-# Criação da janela principal
-app = ctk.CTk()
-app.title('Cadastro e Login')
-app.geometry('300x400')
+# login
+print("\nAgora, faça login para acessar sua conta.")
 
-# Campos de entrada
-label_usuario = ctk.CTkLabel(app, text='Usuário')
-label_usuario.pack(pady=5)
-campo_usuario = ctk.CTkEntry(app, placeholder_text='Digite seu usuário')
-campo_usuario.pack(pady=5)
+while True:
+    login_usuario = entrada_valida("Digite seu nome de usuário: ")
+    login_senha = entrada_valida("Digite sua senha: ")
 
-label_senha = ctk.CTkLabel(app, text='Senha')
-label_senha.pack(pady=5)
-campo_senha = ctk.CTkEntry(app, placeholder_text='Digite sua senha', show="*")
-campo_senha.pack(pady=5)
+    # verifica se o usuário e a senha estão no arquivo
+    with open("usuarios.txt", "r") as arquivo:
+        usuarios_cadastrados = arquivo.readlines()
 
-# Button
-botao_login = ctk.CTkButton(app, text='Login', command=validar_login)
-botao_login.pack(pady=10)
+    login_sucesso = False  # variavel controla o status do login
 
-botao_registrar = ctk.CTkButton(app, text='Registrar', command=registrar_usuario)
-botao_registrar.pack(pady=10)
+    for linha in usuarios_cadastrados:
+        dados = linha.strip().split(",")
 
-# Mensagem de feedback
-label_mensagem = ctk.CTkLabel(app, text="")
-label_mensagem.pack(pady=10)
+        # Garantir que a linha tem exatamente três partes (nome, cpf e senha)
+        if len(dados) == 3:
+            nome_salvo, cpf_salvo, senha_salva = dados
 
-# Inicia o loop da aplicação
-app.mainloop()
+            if login_usuario == nome_salvo and login_senha == senha_salva:
+                print("\n✅ Login realizado com sucesso! Bem-vindo de volta!")
+                login_sucesso = True
+                break
+
+    if login_sucesso:
+        break  
+    else:
+        print("⚠️ Usuário ou senha incorretos. Tente novamente.")
+
