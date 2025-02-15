@@ -8,7 +8,7 @@ Segue abaixo o README atualizado, com as novas funcionalidades e explicações d
 
 O **Tigrinho** é um projeto desenvolvido para demonstrar conceitos de programação, manipulação de dados e lógica de controle em jogos de aposta. Inspirado em clássicos jogos de azar, o sistema simula um jogo de sorte em que os jogadores apostam em rodadas baseadas em matrizes de símbolos. O projeto ainda ilustra como a manipulação dos dados pode ser ajustada para favorecer a lucratividade da empresa, permitindo que apenas alguns jogadores obtenham ganhos significativos.
 
-Adicionalmente, o sistema agora incorpora uma funcionalidade de _influencer_, que possibilita condições diferenciadas para certos usuários, além de um módulo robusto de gerenciamento do banco da empresa, que controla o saldo total e mantém um histórico das transações.
+Adicionalmente, o sistema incorpora uma funcionalidade de _influencer_, que possibilita condições diferenciadas para certos usuários, além de um módulo robusto de gerenciamento do banco da empresa, que controla o saldo total e mantém um histórico das transações.
 
 ## Descrição do Projeto
 
@@ -69,13 +69,6 @@ Além disso, foi incorporada uma funcionalidade para **influencers** – um stat
           if dado:
               return dado
           print("Preencha o campo vazio.")
-  ```
-
-- **`validar_cpf(cpf)`**  
-  Realiza a validação básica do CPF (11 dígitos numéricos).  
-  ```python
-  def validar_cpf(cpf):
-      return len(cpf) == 11 and cpf.isdigit()
   ```
 
 - **`verificar_existencia(usuario, cpf)`**  
